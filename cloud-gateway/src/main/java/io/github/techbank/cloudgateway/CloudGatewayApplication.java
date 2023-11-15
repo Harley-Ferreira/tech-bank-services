@@ -19,6 +19,7 @@ public class CloudGatewayApplication {
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
 		return builder
 				.routes()
+				.route(r -> r.path("/customer/**").uri("lb://customer-service"))
 				.build();
 	}
 }
