@@ -55,8 +55,6 @@ Zcustomer-service/src/main/java/io/github/techbank/customerservice/AppController
 Xcloud-gateway/src/main/java/io/github/techbank/cloudgateway/CloudGatewayApplication.java,9\5\9566d928822c542a770cecec5319aee09867546b
 è
 _customer-service/src/main/java/io/github/techbank/customerservice/services/CustomerService.java,6\a\6a0aa71076fa7edf3bd4aef08864df134685e723
-à
-Xcustomer-service/src/main/java/io/github/techbank/customerservice/entities/Customer.java,a\c\ac0a92142fb2cae05d475421a0411686afdea2ba
 ñ
 fcustomer-service/src/test/java/io/github/techbank/customerservice/CustomerServiceApplicationTests.java,2\2\221f79c52d6d1cc0671445ead15931a764223832
 ô
