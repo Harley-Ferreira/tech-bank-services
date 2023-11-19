@@ -10,12 +10,14 @@
         <module name="eureka-server" />
         <module name="customer-service" />
         <module name="cloud-gateway" />
+        <module name="credit-card-service" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cloud-gateway" options="-parameters" />
+      <module name="credit-card-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
     </option>

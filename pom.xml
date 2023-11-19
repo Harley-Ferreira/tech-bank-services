@@ -20,6 +20,7 @@
         <module>eureka-server</module>
         <module>cloud-gateway</module>
         <module>customer-service</module>
+        <module>credit-card-service</module>
     </modules>
 
     <properties>
