@@ -12,7 +12,7 @@ public record CreditCardDTO(
         @NotBlank(message = "fill the name.")
         String name,
 
-        @NotBlank(message = "fill the name.")
+        @NotBlank(message = "fill the brand.")
         String brand,
 
         @NotNull(message = "fill the incame.")

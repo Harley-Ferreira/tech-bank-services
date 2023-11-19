@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static io.github.techbank.customerservice.utils.CustomerFactory.createNewCustomer;
 import static org.junit.jupiter.api.Assertions.*;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
