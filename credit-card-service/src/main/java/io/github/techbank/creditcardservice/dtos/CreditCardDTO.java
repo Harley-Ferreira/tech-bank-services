@@ -15,8 +15,8 @@ public record CreditCardDTO(
         @NotBlank(message = "fill the brand.")
         String brand,
 
-        @NotNull(message = "fill the incame.")
-        Double incame,
+        @NotNull(message = "fill the income.")
+        Double income,
 
         @NotNull(message = "fill the card limit.")
         BigDecimal cardLimit) {
@@ -26,7 +26,7 @@ public record CreditCardDTO(
                 creditCard.getId(),
                 creditCard.getName(),
                 creditCard.getCardBrand().name(),
-                creditCard.getIncame(),
+                creditCard.getIncome(),
                 creditCard.getCardLimit()
         );
     }

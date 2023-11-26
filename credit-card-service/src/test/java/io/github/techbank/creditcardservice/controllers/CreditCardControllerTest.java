@@ -3,6 +3,7 @@ package io.github.techbank.creditcardservice.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.techbank.creditcardservice.entities.CreditCard;
 import io.github.techbank.creditcardservice.exceptions.ExistsObjectInDBException;
+import io.github.techbank.creditcardservice.exceptions.ObjectNotFoundBDException;
 import io.github.techbank.creditcardservice.services.CreditCardService;
 import io.github.techbank.creditcardservice.utils.CreditCardFactory;
 import org.hamcrest.Matchers;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,9 +22,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Arrays;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -79,5 +85,46 @@ public class CreditCardControllerTest {
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("errors", Matchers.hasSize(1)));
+    }
+
+
+    // GET CREDIT CARD BY INCOME
+    @Test
+    void GivenAnIncome_WhenCallGetByIncome_ThenReturnCreditCard() throws Exception {
+        // Scenary
+        Double income = 2.00;
+        var creditCard = CreditCardFactory.createNewCredicCard();
+        BDDMockito.given(creditCardService.getListCreditCardByIncome(anyDouble())).willReturn(Arrays.asList(creditCard));
+
+        // Execution and Verification
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(CREDIT_CARD_URL.concat("/" + income))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().equals(Arrays.asList(creditCard)))
+                .andExpect(jsonPath("$[0].name").value("Visa Black"))
+                .andExpect(jsonPath("$[0].brand").value("VISA"))
+                .andExpect(jsonPath("$[0].income").value(2.00));
+    }
+
+    @Test
+    void GivenNonExistentCreditCard_WhenCallGetByIncome_ThenThrowAnException() throws Exception {
+        // Scenary
+        Double income = 2.00;
+        String errorMessage = "Unable to find a credit card with this income.";
+        BDDMockito.given(creditCardService.getListCreditCardByIncome(income)).willThrow(new ObjectNotFoundBDException(errorMessage));
+
+        // Execution and Verification
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(CREDIT_CARD_URL.concat("/" + income))
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(jsonPath("errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(errorMessage));
     }
 }
