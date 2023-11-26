@@ -6,11 +6,10 @@ import io.github.techbank.creditcardservice.services.CreditCardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +25,12 @@ public class CreditCardController {
         creditCardDTO = new CreditCardDTO(creditCard);
         var uri = uriComponentsBuilder.path("/credit-card/{id}").buildAndExpand(creditCard.getId()).toUri();
         return ResponseEntity.created(uri).body(creditCardDTO);
+    }
+
+    @GetMapping("{income}")
+    public ResponseEntity<List<CreditCardDTO>> getByIncome(@PathVariable("income") Double income) {
+        var creditCardList = creditCardService.getListCreditCardByIncome(income);
+        var creditCardDTOList = creditCardList.stream().map(CreditCardDTO::new).toList();
+        return ResponseEntity.ok(creditCardDTOList);
     }
 }

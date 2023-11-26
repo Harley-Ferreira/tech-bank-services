@@ -7,6 +7,8 @@ import io.github.techbank.creditcardservice.services.CreditCardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -18,8 +20,13 @@ public class CreditCardServiceImpl implements CreditCardService {
     public CreditCard register(CreditCard creditCard) {
         if (creditCard == null || Objects.equals(creditCard, new CreditCard())) throw new IllegalArgumentException("Invalid object.");
 
-        boolean exists = creditCardRepository.existsByCardBrandAndCardLimitAndIncame(creditCard.getCardBrand(), creditCard.getCardLimit(), creditCard.getIncame());
+        boolean exists = creditCardRepository.existsByCardBrandAndCardLimitAndIncame(creditCard.getCardBrand(), creditCard.getCardLimit(), creditCard.getIncome());
         if (exists) throw new ExistsObjectInDBException("There is already a credit card with this properties.");
         return creditCardRepository.save(creditCard);
+    }
+
+    @Override
+    public List<CreditCard> getListCreditCardByIncome(Double income) {
+        return new ArrayList<>();
     }
 }

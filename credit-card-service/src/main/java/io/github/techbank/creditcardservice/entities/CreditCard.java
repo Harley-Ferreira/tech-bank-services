@@ -32,8 +32,8 @@ public class CreditCard {
     private CardBrand cardBrand;
 
     @NotNull
-    @Column(name = "incame")
-    private Double incame;
+    @Column(name = "income")
+    private Double income;
 
     @NotNull
     @Column(name = "cardLimit")
@@ -43,7 +43,7 @@ public class CreditCard {
         this.id = creditCardDTO.id();
         this.name = creditCardDTO.name();
         this.cardBrand = CardBrand.valueOf(creditCardDTO.brand());
-        this.incame = creditCardDTO.incame();
+        this.income = creditCardDTO.income();
         this.cardLimit = creditCardDTO.cardLimit();
     }
 }

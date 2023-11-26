@@ -37,7 +37,7 @@ public class CreditCardServiceTest {
         // Scenary
         var request = CreditCardFactory.createNewCredicCard(null);
         var creditCard = CreditCardFactory.createNewCredicCard();
-        Mockito.when(creditCardRepository.existsByCardBrandAndCardLimitAndIncame(request.getCardBrand(), request.getCardLimit(), request.getIncame())).thenReturn(false);
+        Mockito.when(creditCardRepository.existsByCardBrandAndCardLimitAndIncame(request.getCardBrand(), request.getCardLimit(), request.getIncome())).thenReturn(false);
         Mockito.when(creditCardRepository.save(any(CreditCard.class))).thenReturn(creditCard);
 
         // Execution
@@ -52,7 +52,7 @@ public class CreditCardServiceTest {
     void GivenAnExistingCreditCard_WhenCallRegister_ThenThrowAnException() {
         // Scenary
         var request = CreditCardFactory.createNewCredicCard(null);
-        Mockito.when(creditCardRepository.existsByCardBrandAndCardLimitAndIncame(request.getCardBrand(), request.getCardLimit(), request.getIncame())).thenReturn(true);
+        Mockito.when(creditCardRepository.existsByCardBrandAndCardLimitAndIncame(request.getCardBrand(), request.getCardLimit(), request.getIncome())).thenReturn(true);
 
         // Execution and Verification
         var exception = assertThrows(ExistsObjectInDBException.class, () -> creditCardService.register(request));

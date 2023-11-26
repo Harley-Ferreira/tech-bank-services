@@ -1,6 +1,7 @@
 package io.github.techbank.creditcardservice;
 
 import io.github.techbank.creditcardservice.exceptions.ExistsObjectInDBException;
+import io.github.techbank.creditcardservice.exceptions.ObjectNotFoundBDException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +14,11 @@ public class AppControllerAdvice {
 
     @ExceptionHandler(ExistsObjectInDBException.class)
     public ResponseEntity handleExistsObjectInDBException(ExistsObjectInDBException e) {
+        return ResponseEntity.badRequest().body(new ApiErrors(e));
+    }
+
+    @ExceptionHandler(ObjectNotFoundBDException.class)
+    public ResponseEntity handleObjectNotFoundBDException(ObjectNotFoundBDException e) {
         return ResponseEntity.badRequest().body(new ApiErrors(e));
     }
 
