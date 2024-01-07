@@ -21,6 +21,7 @@
         <module>cloud-gateway</module>
         <module>customer-service</module>
         <module>credit-card-service</module>
+        <module>credit-appraiser-service</module>
     </modules>
 
     <properties>
