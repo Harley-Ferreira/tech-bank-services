@@ -1,13 +1,17 @@
 package io.github.techbank.creditappraiserservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.techbank.creditappraiserservice.clients.creditcard.CreditCardClient;
 import io.github.techbank.creditappraiserservice.clients.creditcard.CreditCardResponse;
 import io.github.techbank.creditappraiserservice.clients.customer.CustomerClient;
 import io.github.techbank.creditappraiserservice.clients.customer.CustomerResponse;
 import io.github.techbank.creditappraiserservice.dtos.CardApprovedDTO;
+import io.github.techbank.creditappraiserservice.exceptions.PublisherException;
+import io.github.techbank.creditappraiserservice.infra.mqueue.CardEmitPublisher;
 import io.github.techbank.creditappraiserservice.services.implementations.CreditAppraiserServiceImpl;
 import io.github.techbank.creditappraiserservice.utils.CreditCardResponseFactory;
 import io.github.techbank.creditappraiserservice.utils.CustomerResponseFactory;
+import io.github.techbank.creditappraiserservice.utils.DataSolicitationCardQDTOFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -34,9 +39,12 @@ public class CreditAppraiserServiceTest {
     @MockBean
     CustomerClient customerClient;
 
+    @MockBean
+    CardEmitPublisher cardEmitPublisher;
+
     @BeforeEach
     public void setUp() {
-        creditAppraiserService = new CreditAppraiserServiceImpl(creditCardClient, customerClient);
+        creditAppraiserService = new CreditAppraiserServiceImpl(creditCardClient, customerClient, cardEmitPublisher);
     }
 
     // EVALUATE
@@ -77,5 +85,31 @@ public class CreditAppraiserServiceTest {
         // Verification
         Assertions.assertEquals("VISA", returned.get(0).cardBrand());
         Assertions.assertEquals(new BigDecimal("44000.0"), returned.get(0).approvedCardLimit());
+    }
+
+    // REQUEST CARD
+    @Test
+    void GivenDataSolicitationCardQDTO_WhenCallRequestCard_ThenThrowAnPublisherException() throws JsonProcessingException {
+        // Scenery
+        var data = DataSolicitationCardQDTOFactory.createNewDataSolicitationCardQDTO();
+        when(cardEmitPublisher.requestCard(any())).thenReturn(false);
+
+        // Execution and Verification
+        var exception = assertThrows(PublisherException.class,  () -> creditAppraiserService.requestCard(data));
+        var expectMessage = "It not possible to send to queue.";
+        Assertions.assertEquals(expectMessage, exception.getMessage());
+    }
+
+    @Test
+    void GivenDataSolicitationCardQDTO_WhenCallRequestCard_ThenThrowAnProtocol() throws JsonProcessingException {
+        // Scenery
+        var data = DataSolicitationCardQDTOFactory.createNewDataSolicitationCardQDTO();
+        when(cardEmitPublisher.requestCard(any())).thenReturn(true);
+
+        // Execution
+        String returnedProtocol = creditAppraiserService.requestCard(data);
+
+        // Verification
+        Assertions.assertNotNull(returnedProtocol);
     }
 }
