@@ -1,8 +1,11 @@
 package io.github.techbank.creditappraiserservice.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.techbank.creditappraiserservice.exceptions.ObjectNotFoundFeignException;
+import io.github.techbank.creditappraiserservice.infra.mqueue.DataSolicitationCardQDTO;
 import io.github.techbank.creditappraiserservice.services.CreditAppraiserService;
 import io.github.techbank.creditappraiserservice.utils.ApprovedCreditFactory;
+import io.github.techbank.creditappraiserservice.utils.DataSolicitationCardQDTOFactory;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -76,5 +80,26 @@ public class CreditAppraiserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("errors", Matchers.hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value(errorMessage));
+    }
+
+    // REQUEST CARD
+    @Test
+    void GivenDataSolicitationCardQDTO_WhenCallRequestCard_ThenReturnAProtocol() throws Exception {
+        // Scenary
+        var dataSolicitationCardQDTO = DataSolicitationCardQDTOFactory.createNewDataSolicitationCardQDTO();
+        var protocol = UUID.randomUUID().toString();
+        BDDMockito.given(creditAppraiserService.requestCard(any(DataSolicitationCardQDTO.class))).willReturn(protocol);
+
+        // Execution and Verification
+        String json = new ObjectMapper().writeValueAsString(dataSolicitationCardQDTO);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(CREDIT_CARD_URL.concat("/request-card"))
+                .content(json)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().equals(protocol));
     }
 }
