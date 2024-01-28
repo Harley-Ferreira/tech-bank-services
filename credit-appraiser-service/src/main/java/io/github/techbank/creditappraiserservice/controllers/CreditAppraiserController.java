@@ -4,6 +4,7 @@ import io.github.techbank.creditappraiserservice.dtos.CardApprovedDTO;
 import io.github.techbank.creditappraiserservice.dtos.SolicitationCardDTO;
 import io.github.techbank.creditappraiserservice.infra.mqueue.DataSolicitationCardQDTO;
 import io.github.techbank.creditappraiserservice.services.CreditAppraiserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class CreditAppraiserController {
     }
 
     @PostMapping("request-card")
-    public ResponseEntity<String> requestCard(SolicitationCardDTO dto) {
+    public ResponseEntity<String> requestCard(@RequestBody @Valid SolicitationCardDTO dto) {
         var data = new DataSolicitationCardQDTO(dto);
         return ResponseEntity.ok(creditAppraiserService.requestCard(data));
     }
