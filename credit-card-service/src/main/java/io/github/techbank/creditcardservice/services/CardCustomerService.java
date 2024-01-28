@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CardCustomerService {
 
-    CardCustomer register(CardCustomer cardCustomer);
+    CardCustomer save(CardCustomer cardCustomer);
 
     List<CardCustomer> getListCreditCardByCpf(String cpf);
 }

@@ -15,13 +15,20 @@ public class CardCustomerServiceImpl implements CardCustomerService {
     private final CardCustomerRepository cardCustomerRepository;
 
     @Override
-    public CardCustomer register(CardCustomer creditCard) {
-        return null;
+    public CardCustomer save(CardCustomer creditCard) {
+        if (creditCard == null || creditCard.getId() != null) {
+            throw new IllegalArgumentException("Invalid object.");
+        }
+
+        if (creditCard.getCpf() == null || creditCard.getCpf().isBlank()) {
+            throw new IllegalArgumentException("Invalid cpf.");
+        }
+        return cardCustomerRepository.save(creditCard);
     }
 
     @Override
     public List<CardCustomer> getListCreditCardByCpf(String cpf) {
-        if (cpf == null) throw new IllegalArgumentException("Invalid object.");
+        if (cpf == null) throw new IllegalArgumentException("Invalid cpf.");
         return cardCustomerRepository.findAllByCpf(cpf);
     }
 }
