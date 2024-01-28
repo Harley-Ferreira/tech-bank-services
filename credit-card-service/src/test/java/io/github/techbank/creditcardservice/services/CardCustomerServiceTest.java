@@ -4,7 +4,6 @@ import io.github.techbank.creditcardservice.entities.CardCustomer;
 import io.github.techbank.creditcardservice.repositories.CardCustomerRepository;
 import io.github.techbank.creditcardservice.services.implementations.CardCustomerServiceImpl;
 import io.github.techbank.creditcardservice.utils.CardCustomerFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -40,8 +39,8 @@ public class CardCustomerServiceTest {
 
         // Execution and Verification
         var exception = assertThrows(IllegalArgumentException.class,  () -> cardCustomerService.getListCreditCardByCpf(cpf));
-        var expectMessage = "Invalid object.";
-        Assertions.assertEquals(expectMessage, exception.getMessage());
+        var expectMessage = "Invalid cpf.";
+        assertEquals(expectMessage, exception.getMessage());
     }
 
     @Test
@@ -60,4 +59,43 @@ public class CardCustomerServiceTest {
         assertEquals(cardCustomerList.get(0), returnCreditCardList.get(0));
         assertEquals(cardCustomerList.get(1), returnCreditCardList.get(1));
     }
+
+    // SAVE CREDIT CARD
+    @Test
+    void GivenANullCardCustomer_WhenCallSave_ThenThrowAnException() {
+        CardCustomer cardCustomer = null;
+
+        // Execution and Verification
+        var exception = assertThrows(IllegalArgumentException.class,  () -> cardCustomerService.save(cardCustomer));
+        var expectMessage = "Invalid object.";
+        assertEquals(expectMessage, exception.getMessage());
+    }
+
+    @Test
+    void GivenANullCpf_WhenCallSave_ThenThrowAnException() {
+        CardCustomer cardCustomer = new CardCustomer();
+
+        // Execution and Verification
+        var exception = assertThrows(IllegalArgumentException.class,  () -> cardCustomerService.save(cardCustomer));
+        var expectMessage = "Invalid cpf.";
+        assertEquals(expectMessage, exception.getMessage());
+    }
+
+    @Test
+    void GivenACardCustomer_WhenCallSave_ThenSaveAndReturnACardCustomer() {
+        // Scenery
+        CardCustomer cardCustomer = CardCustomerFactory.createCustomer(1L);
+        when(cardCustomerRepository.save(any(CardCustomer.class))).thenReturn(cardCustomer);
+
+
+        // Execution and Verification
+        CardCustomer request = CardCustomerFactory.createCustomer(null);
+        var savedCardCustomer = cardCustomerService.save(request);
+
+        assertNotNull(savedCardCustomer.getId());
+        assertEquals(request.getCreditCard().getId(), savedCardCustomer.getCreditCard().getId());
+        assertEquals(request.getCpf(), savedCardCustomer.getCpf());
+    }
+
+
 }
