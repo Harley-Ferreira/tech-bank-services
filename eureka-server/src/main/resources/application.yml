@@ -1,7 +1,14 @@
 spring:
   application:
     name: eurekaserver
+  security:
+    basic:
+      enabled: true
+    user:
+      name: tech-bank
+      password: GYqQlHPH8QP6InO
 
+### Create an env variable to name and password
 
 server:
   port: 8761
